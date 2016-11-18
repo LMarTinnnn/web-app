@@ -3,7 +3,8 @@
 """
 
 
-import time, uuid # UUID含义是通用唯一识别码 (Universally Unique Identifier)
+import time, uuid
+# UUID含义是通用唯一识别码 (Universally Unique Identifier)
 
 from orm import Model, StringField, BooleanField, FloatField, TextField
 

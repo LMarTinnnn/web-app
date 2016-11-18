@@ -57,6 +57,7 @@ async def data_factory(app, handler):
         return await handler(request)
     return parse_data
 
+
 async def auth_factory(app, handler):
     async def auth(request):
         logging.info('check user: %s %s' % (request.method, request.path))
@@ -67,6 +68,8 @@ async def auth_factory(app, handler):
             if user:
                 logging.info('set current user: %s' % user.email)
                 request.__user__ = user
+        if request.path.startswith('/manage/') and (request.__user__ is None or not request.__user__.admin):
+            return web.HTTPFound('/signin')
         return await handler(request)
     return auth
 
@@ -131,7 +134,8 @@ async def init(loop):
     # create a pool connection with made mysql user and database
     await orm.create_pool(loop=loop, host='127.0.0.1', port=3306, user='liuyongbo', password='lyb97427', db='webdata')
     # initiate the asyncio web app
-    app = web.Application(loop=loop, middlewares=[logger_factory, auth_factory, response_factory])  # 'loop' is a event_loop response_factory
+    app = web.Application(loop=loop, middlewares=[logger_factory, auth_factory, response_factory])
+    # 'loop' is a event_loop response_factory
     # init jinja2
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     # 将所有url处理函数进行  add_route操作
@@ -147,6 +151,3 @@ async def init(loop):
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init(loop))
 loop.run_forever()
-
-
-

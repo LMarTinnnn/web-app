@@ -245,9 +245,11 @@ class Model(dict, metaclass=ModelMetaclass):
         return [cls(**r) for r in rs]
 
     @classmethod
-    async def findNumber(cls, selectField, where=None, args=None):
-        ' find number by select and where. '
-        sql = ['select %s _num_ from `%s`' % (selectField, cls.__table__)]
+    async def findNumber(cls, select_field, where=None, args=None):
+        """
+        find number by select and where.
+        """
+        sql = ['select %s _num_ from `%s`' % (select_field, cls.__table__)]
         if where:
             sql.append('where')
             sql.append(where)
@@ -258,7 +260,9 @@ class Model(dict, metaclass=ModelMetaclass):
 
     @classmethod
     async def find(cls, pk):
-        ' find object by primary key. '
+        """
+        find object by primary key.
+        """
         rs = await select('%s where `%s`=?' % (cls.__select__, cls.__primary_key__), [pk], 1)
         if len(rs) == 0:
             return None
